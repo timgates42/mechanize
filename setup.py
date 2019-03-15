@@ -81,7 +81,7 @@ class Test(test):
 
 def main():
     setuptools.setup(
-        name="mechanize",
+        name="mechanize3",
         version=VERSION,
         license="BSD",
         platforms=["any"],
@@ -94,8 +94,8 @@ def main():
         author_email='no@no.no',
         description=__doc__.split("\n", 1)[0],
         long_description=__doc__.split("\n", 2)[-1],
-        url="https://github.com/python-mechanize/mechanize",
-        download_url=("https://pypi.python.org/packages/source/m/mechanize/"
+        url="https://github.com/timgates42/mechanize",
+        download_url=("https://pypi.python.org/packages/source/m/mechanize3/"
                       "mechanize-%s.tar.gz" % VERSION),
         packages=["mechanize"],
     )
