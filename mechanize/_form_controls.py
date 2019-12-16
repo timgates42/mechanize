@@ -7,10 +7,11 @@ import re
 import sys
 import warnings
 from io import BytesIO
+from mimetypes import guess_type
 
 from . import _request
-from .polyglot import (as_unicode, is_py2, iteritems, urlencode, urlparse,
-                       urlunparse)
+from .polyglot import (as_unicode, is_py2, iteritems, unicode_type, urlencode,
+                       urlparse, urlunparse)
 
 if is_py2:
     from cStringIO import StringIO
@@ -59,12 +60,13 @@ def compress_whitespace(text):
 
 
 def isstringlike(x):
+    if isinstance(x, (bytes, unicode_type)):
+        return True
     try:
         x + ""
+        return True
     except Exception:
         return False
-    else:
-        return True
 
 
 def choose_boundary():
@@ -525,7 +527,9 @@ class FileControl(ScalarControl):
         if filename is not None and not isstringlike(filename):
             raise TypeError("filename must be None or string-like")
         if content_type is None:
-            content_type = "application/octet-stream"
+            if getattr(file_object, 'name', None):
+                content_type = guess_type(file_object.name)[0]
+            content_type = content_type or "application/octet-stream"
         self._upload_data.append((file_object, content_type, filename))
 
     def _totally_ordered_pairs(self):
@@ -1836,7 +1840,8 @@ class HTMLForm:
                  request_class=_request.Request,
                  forms=None,
                  labels=None,
-                 id_to_labels=None):
+                 id_to_labels=None,
+                 encoding=None):
         """
         In the usual case, use ParseResponse (or ParseFile) to create new
         HTMLForm objects.
@@ -1851,6 +1856,7 @@ class HTMLForm:
         self.action = action
         self.method = method
         self.enctype = enctype
+        self.form_encoding = encoding or 'utf-8'
         self.name = name
         if attrs is not None:
             self.attrs = dict(attrs)
@@ -1932,6 +1938,7 @@ class HTMLForm:
         """
         for control in self.controls:
             control.fixup()
+            control.form_encoding = self.form_encoding
 
 # ---------------------------------------------------
 
@@ -2488,6 +2495,8 @@ class HTMLForm:
         for control_index in range(len(self.controls)):
             control = self.controls[control_index]
             for ii, key, val in control._totally_ordered_pairs():
+                if ii is None:
+                    ii = -1
                 pairs.append((ii, key, val, control_index))
 
         # stable sort by ONLY first item in tuple
@@ -2502,13 +2511,13 @@ class HTMLForm:
         rest, (query, frag) = parts[:-2], parts[-2:]
         frag
 
-        def as_utf8(x):
-            if not isinstance(x, bytes):
-                x = x.encode('utf-8')
+        def encode_data(x):
+            if isinstance(x, unicode_type):
+                x = x.encode(self.form_encoding)
             return x
 
         def encode_query():
-            p = [(as_utf8(k), as_utf8(v)) for k, v in self._pairs()]
+            p = [(encode_data(k), encode_data(v)) for k, v in self._pairs()]
             return urlencode(p)
 
         if method == "GET":
@@ -2532,7 +2541,7 @@ class HTMLForm:
                     "form-data", add_to_http_hdrs=True, prefix=0)
                 for ii, k, v, control_index in self._pairs_and_controls():
                     self.controls[control_index]._write_mime_data(
-                            mw, as_utf8(k), as_utf8(v))
+                            mw, encode_data(k), encode_data(v))
                 mw.lastpart()
                 return uri, data.getvalue(), http_hdrs
             else:

@@ -4,7 +4,7 @@ Copyright 2003-2006 John J. Lee <jjl@pobox.com>
 Copyright 2003 Andy Lester (original Perl code)
 
 This code is free software; you can redistribute it and/or modify it
-under the terms of the BSD or ZPL 2.1 licenses (see the file COPYING.txt
+under the terms of the BSD or ZPL 2.1 licenses (see the file LICENSE
 included with the distribution).
 
 """
@@ -468,7 +468,7 @@ class Browser(UserAgentBase):
                                       path='/some-page')
         '''
         self.cookiejar.set_cookie(
-            Cookie(None, name, value, None, False, domain, True, False, path,
+            Cookie(0, name, value, None, False, domain, True, False, path,
                    True, False, None, False, None, None, None))
 
     @property

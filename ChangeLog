@@ -1,6 +1,32 @@
 This isn't really in proper GNU ChangeLog format, it just happens to
 look that way.
 
+2019-11-07 Kovid Goyal
+	* 0.4.4 release
+	* URLs passed into mechanize now automatically have URL unsafe characters
+	percent encoded. This is necessary because newer versions of python
+	disallow processing of URLs with unsafe characters. Note that this means
+	values return by get_full_url(), get_selector() etc will be percent encoded.
+
+2019-08-18 Kovid Goyal
+	* 0.4.3 release
+	* When filling forms with unicode strings automatically encode them into
+	the correct encoding fr the HTML page being viewed
+	* Guess content type when uploading files if not specified
+	* py3 compat - Have the version of simple cookies be 0 rather than None
+
+2019-04-12 Kovid Goyal
+	* 0.4.2 release
+	* A couple of python 3 specific fixes for proxy authorization and
+	* adding controls to forms
+
+	
+2019-03-16 Kovid Goyal
+	* 0.4.1 release
+	* A couple of python 3 specific fixes for servers with missing robots.txt
+	files and also errors when using basic/digest auth
+
+	
 2019-01-16 Kovid Goyal
 	* 0.4.0 release
 	* Python 3 compatibility
