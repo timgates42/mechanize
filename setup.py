@@ -78,12 +78,12 @@ class Test(test):
 
 def main():
     setuptools.setup(
-        name="mechanize",
+        name="mechanize42",
         version=VERSION,
         license="BSD",
         platforms=["any"],
         cmdclass={'test': Test},
-        install_requires=['html5lib>=0.999999999'],
+        install_requires=['html5lib52>=0.999999999'],
         extras_require={'fast': ['html5-parser>=0.4.4']},
         classifiers=[c for c in CLASSIFIERS.split("\n") if c],
         zip_safe=True,
