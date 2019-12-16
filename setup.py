@@ -83,7 +83,7 @@ def main():
         license="BSD",
         platforms=["any"],
         cmdclass={'test': Test},
-        install_requires=['html5lib52>=0.999999999'],
+        install_requires=['html5lib42>=0.999999999'],
         extras_require={'fast': ['html5-parser>=0.4.4']},
         classifiers=[c for c in CLASSIFIERS.split("\n") if c],
         zip_safe=True,
